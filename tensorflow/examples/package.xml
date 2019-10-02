@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package format="2">
+  <!--Package Header-->
+  <name>tensorflow_examples</name>
+  <version>0.0.0</version>
+  <description>The tensorflow_example CMake package.</description>
+  <license>Proprietary</license>
+  <url type="website">http://bitbucket.org/leggedrobotics/tensorflow</url>
+  <maintainer email="tsounisv@ethz.ch">Vassilios Tsounis</maintainer>
+  <!--Package Dependencies-->
+  <buildtool_depend>cmake</buildtool_depend>
+  <exec_depend>catkin</exec_depend>
+  <build_depend>tensorflow</build_depend>
+  <!--Package Export-->
+  <export>
+    <build_type>cmake</build_type>
+  </export>
+</package>

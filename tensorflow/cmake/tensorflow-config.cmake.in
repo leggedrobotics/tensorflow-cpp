@@ -1,0 +1,72 @@
+#=============================================================================
+# Copyright (C) 2019, Robotic Systems Lab, ETH Zurich
+# All rights reserved.
+# http://www.rsl.ethz.ch
+# https://bitbucket.org/leggedrobotics/tensorflow
+#
+# This software is distributed WITHOUT ANY WARRANTY; without even the
+# implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the License for more information.
+#=============================================================================
+# Authors: Vassilios Tsounis, tsounisv@ethz.ch
+#=============================================================================
+#
+# Finds the TensorFlow C++ library for integration into CMake projects.
+#
+# This will define the following imported targets:
+#    TensorFlow::TensorFlow
+#
+# In addition, following variables will also be defined:
+#    TensorFlow_FOUND
+#    TensorFlow_VERSION
+#    TensorFlow_CPU
+#    TensorFlow_DIR
+#    TensorFlow_INCLUDE_DIRS
+#    TensorFlow_LIBRARIES
+#=============================================================================
+include(FindPackageHandleStandardArgs)
+
+# Unset found flag to ensure correct package configuration
+unset(TensorFlow_FOUND)
+
+#==
+# Configurations
+#==
+
+set(TensorFlow_VERSION @CONFIG_VERSION@)
+set(TensorFlow_DIR @CONFIG_DIRECTORY@)
+
+#==
+# Pacakge contents
+#==
+
+if(NOT TARGET TensorFlow::TensorFlow)
+  include(${CMAKE_CURRENT_LIST_DIR}/TensorFlow-targets.cmake)
+endif()
+
+get_target_property(TensorFlow_INCLUDE_DIRS TensorFlow::TensorFlow INTERFACE_INCLUDE_DIRECTORIES)
+get_target_property(TensorFlow_LIBRARIES TensorFlow::TensorFlow INTERFACE_LINK_LIBRARIES)
+
+#==
+# Pacakge configuration check
+#==
+
+find_package_handle_standard_args(TensorFlow
+  REQUIRED_VARS
+    TensorFlow_VERSION
+    TensorFlow_DIR
+    TensorFlow_INCLUDE_DIRS
+    TensorFlow_LIBRARIES
+)
+
+if(TensorFlow_FOUND)
+  message(STATUS "TensorFlow:")
+  message(STATUS "  Version: ${TensorFlow_VERSION}")
+  message(STATUS "  Directory: ${TensorFlow_DIR}")
+  message(STATUS "  Includes: ${TensorFlow_INCLUDE_DIRS}")
+  message(STATUS "  Libraries: ${TensorFlow_LIBRARIES}")
+endif()
+
+mark_as_advanced(TensorFlow_FOUND TensorFlow_VERSION TensorFlow_DIR TensorFlow_INCLUDE_DIRS TensorFlow_LIBRARIES)
+
+# EOF
