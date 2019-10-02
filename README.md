@@ -1,4 +1,5 @@
 ![TensorFlow](doc/figures/tensorflow-logo.png)
+![C++](doc/figures/cpp-logo.png)
 ![CMake](doc/figures/cmake-logo.png)
 
 [![Documentation](https://img.shields.io/badge/api-reference-blue.svg)](http://docs.leggedrobotics.com/tensorflow/)
