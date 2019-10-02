@@ -51,12 +51,22 @@ if(NOT DEFINED TENSORFLOW_ROOT)
   endif()
   # Sets to use CPU-only or GPU-enabled builds
   if(TF_CPU_ONLY)
-    set(TENSORFLOW_SRC_DIR ${CMAKE_CURRENT_LIST_DIR}/lib/${TENSORFLOW_VERSION}-cpu)
+    set(TENSORFLOW_DIST ${TENSORFLOW_VERSION}-cpu)
   else()
-    set(TENSORFLOW_SRC_DIR ${CMAKE_CURRENT_LIST_DIR}/lib/${TENSORFLOW_VERSION}-gpu)
+    set(TENSORFLOW_DIST ${TENSORFLOW_VERSION}-gpu)
   endif()
-  # Retrieve pre-built binaries and headers
-  # TODO
+  set(TENSORFLOW_SRC_DIR ${CMAKE_CURRENT_LIST_DIR}/lib/${TENSORFLOW_DIST})
+  # Retrieve pre-built binaries and headers if they dont exist
+  if(NOT EXISTS ${TENSORFLOW_SRC_DIR})
+    set(TFLIBZIP ${TENSORFLOW_SRC_DIR}.zip)
+    set(TFLIBURL https://github.com/leggedrobotics/tensorflow-cpp/releases/download/v0.1.0/${TENSORFLOW_DIST}.zip)
+    message(STATUS "Downloading binaries from '${TFLIBURL}'. Please wait ...")
+    if(NOT EXISTS ${TFLIBZIP})
+      file(DOWNLOAD ${TFLIBURL} ${TFLIBZIP})
+    endif()
+    execute_process(COMMAND ${CMAKE_COMMAND} -E tar -xf ${TFLIBZIP} WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/lib)
+  endif()
+  message(STATUS "Done.")
   get_filename_component(TENSORFLOW_SRC_DIR ${TENSORFLOW_SRC_DIR} REALPATH)
 else()
   # Uses user-specified (custom) build
