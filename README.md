@@ -7,7 +7,7 @@
 
 # TensorFlow CMake
 
-This repository provides CMake packaging of pre-built TensorFlow C/C++ (headers + libraries).
+This repository provides pre-built TensorFlow for C/C++ (headers + libraries) and CMake.
 
 **Maintainer:** Vassilios Tsounis  
 **Affiliation:** Robotic Systems Lab, ETH Zurich  
