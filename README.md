@@ -35,7 +35,7 @@ git clone https://bitbucket.org/leggedrobotics/tensorflow.git
 
 ### Eigen
 
-To install the special version of Eigen requried by TensorFlow which we also bundle in this repository:
+To install the special version of Eigen requried by TensorFlow that we also bundle in this repository:
 ```bash
 cd tensorflow/eigen
 mkdir build && cd build
@@ -69,7 +69,7 @@ ln -s ~/git/tensorflow/tensorflow ~/catkin_ws/src/
 
 ## Use
 
-TensorFlow CMake can be included into other projects either using the `find_package` command:
+TensorFlow CMake can be included in other projects either using the `find_package` command:
 ```CMake
 ...
 find_package(TensorFlow CONFIG REQUIRED)
