@@ -24,19 +24,18 @@ This repository provides TensorFlow libraries with the following specifications:
   - All variants are built with full CPU optimizations available for `amd64` architectures.  
   - GPU variants are built to support compute capabilities: `5.0`, `6.1`, `7.0`, `7.2`, `7.5`  
 
-**NOTE:** We temporarily provide `1.13.0` for supporting Ubuntu `16.04` but will soon be removed.
 **NOTE:** This repository does not include or bundle the source TensorFlow [repository](https://github.com/tensorflow/tensorflow).
 
 ## Install
-
-### Eigen
 
 First clone this repository:
 ```bash
 git clone https://bitbucket.org/leggedrobotics/tensorflow.git
 ```
 
-Then install the special version of Eigen requried by TensorFlow which we also bundle in this repository:
+### Eigen
+
+To install the special version of Eigen requried by TensorFlow which we also bundle in this repository:
 ```bash
 cd tensorflow/eigen
 mkdir build && cd build
@@ -44,8 +43,6 @@ cmake -DCMAKE_INSTALL_PREFIX=~/.local -DCMAKE_BUILD_TYPE=Release ..
 make install -j
 ```
 **NOTE:** We recommend installing to `~/.local` in order to prevent conflicts with other version of Eigen which may be installed via `apt`. Eigen exports its package during the build step, so CMake will default to finding the one we just installed unless a `HINT` is used or `CMAKE_PREFIX_PATH` is set to another location.  
-
-
 
 ### TensorFlow
 
@@ -85,7 +82,6 @@ or alternatively included directly into other projects using the `add_subdirecto
 add_subdirectory(/<SOURCE-PATH>/tensorflow/tensorflow)
 ...
 ```
-
 **NOTE:** By default the CMake package will select the GPU-enabled variant of a given library version and defining/setting the `TF_CPU_ONLY` option variable reverts to the CPU-only variant.
 
 User targets such as executables and libraries can now include the `TensorFlow::TensorFlow` CMake target using the `target_link_libraries` command.
