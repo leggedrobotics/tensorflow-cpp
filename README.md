@@ -3,7 +3,8 @@
 ![CMake](doc/figures/cmake-logo.png)
 
 [![Documentation](https://img.shields.io/badge/api-reference-blue.svg)](http://docs.leggedrobotics.com/tensorflow/)
-[![Build Status](https://ci.leggedrobotics.com/buildStatus/icon?job=bitbucket_leggedrobotics/tensorflow/master)](https://ci.leggedrobotics.com/job/bitbucket_leggedrobotics/job/tensorflow/job/master/)
+[![Build Status](https://ci.leggedrobotics.com/buildStatus/icon?job=github_leggedrobotics/tensorflow-cpp/master
+)](https://ci.leggedrobotics.com/job/github_leggedrobotics/job/tensorflow-cpp/job/master/)
 
 # TensorFlow CMake
 
