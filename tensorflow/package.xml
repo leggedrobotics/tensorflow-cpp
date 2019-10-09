@@ -2,7 +2,7 @@
 <package format="2">
   <!--Package Header-->
   <name>tensorflow</name>
-  <version>0.0.0</version>
+  <version>0.1.0</version>
   <description>The TensorFlow Catkin-ized CMake package.</description>
   <license>Proprietary</license>
   <url type="website">https://github.com/leggedrobotics/tensorflow-cpp</url>
