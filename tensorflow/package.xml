@@ -5,7 +5,7 @@
   <version>0.0.0</version>
   <description>The tensorflow CMake package.</description>
   <license>Proprietary</license>
-  <url type="website">http://bitbucket.org/leggedrobotics/tensorflow</url>
+  <url type="website">https://github.com/leggedrobotics/tensorflow-cpp</url>
   <maintainer email="tsounisv@ethz.ch">Vassilios Tsounis</maintainer>
   <!--Package Dependencies-->
   <buildtool_depend>cmake</buildtool_depend>
