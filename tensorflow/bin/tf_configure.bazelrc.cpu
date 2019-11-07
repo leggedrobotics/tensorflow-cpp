@@ -7,6 +7,7 @@ build --action_env TF_NEED_OPENCL_SYCL="0"
 build --action_env TF_NEED_ROCM="0"
 build --action_env TF_NEED_CUDA="0"
 build --action_env TF_DOWNLOAD_CLANG="0"
+build:opt --copt=-fPIC
 build:opt --copt=-march=native
 build:opt --copt=-Wno-sign-compare
 build:opt --host_copt=-march=native

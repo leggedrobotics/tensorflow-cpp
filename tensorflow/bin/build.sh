@@ -117,7 +117,7 @@ cp -r -L ${TF_SRC}/third_party/eigen3 ${TF_LIB}/include/third_party/
 echo "TensorFlow: Build: Copying libraries";
 cp ${TF_SRC}/bazel-bin/tensorflow/libtensorflow_cc.so ${TF_LIB}/lib/
 cp ${TF_SRC}/bazel-bin/tensorflow/libtensorflow_framework.so ${TF_LIB}/lib/
-cp ${TF_SRC}/bazel-src/bazel-out/host/bin/external/protobuf_archive/libprotobuf.a ${TF_LIB}/lib;
+cp ${TF_SRC}/bazel-src/bazel-out/host/bin/external/protobuf_archive/libprotobuf.so ${TF_LIB}/lib;
 
 # Completion
 echo "TensorFlow: Build: Done!";

@@ -16,6 +16,7 @@ build --action_env TF_CUDA_CLANG="0"
 build --action_env GCC_HOST_COMPILER_PATH="/usr/bin/gcc"
 build --config=cuda
 test --config=cuda
+build:opt --copt=-fPIC
 build:opt --copt=-march=native
 build:opt --copt=-Wno-sign-compare
 build:opt --host_copt=-march=native
