@@ -82,7 +82,7 @@ or alternatively included directly into other projects using the `add_subdirecto
 add_subdirectory(/<SOURCE-PATH>/tensorflow/tensorflow)
 ...
 ```
-**NOTE:** By default the CMake package will select the GPU-enabled variant of a given library version and defining/setting the `TF_CPU_ONLY` option variable reverts to the CPU-only variant.
+**NOTE:** By default the CMake package will select the CPU-only variant of a given library version and defining/setting the `TF_USE_GPU` option variable reverts to the GPU-enabled variant.
 
 User targets such as executables and libraries can now include the `TensorFlow::TensorFlow` CMake target using the `target_link_libraries` command.
 ```CMake

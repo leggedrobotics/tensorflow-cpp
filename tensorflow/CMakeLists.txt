@@ -21,8 +21,7 @@ include(CMakePackageConfigHelpers)
 # Options
 #==
 
-# Configures the use of the  pre-built library built for CPU-only support.
-option(TF_CPU_ONLY "Configures TensorFlow for CPU-only computations." OFF)
+option(TF_USE_GPU "Configures TensorFlow for Nvidia CUDA GPUs." OFF)
 option(TF_USE_IN_SOURCE "Configures TensorFlow for in-source builds." OFF)
 
 #==
@@ -49,11 +48,11 @@ if(NOT DEFINED TENSORFLOW_ROOT)
   if(NOT DEFINED TENSORFLOW_VERSION)
     set(TENSORFLOW_VERSION "1.13.2")
   endif()
-  # Sets to use CPU-only or GPU-enabled builds
-  if(TF_CPU_ONLY)
-    set(TENSORFLOW_DIST ${TENSORFLOW_VERSION}-cpu)
-  else()
+  # Sets to use CPU-only (default) or GPU-enabled (optional) builds
+  if(TF_USE_GPU)
     set(TENSORFLOW_DIST ${TENSORFLOW_VERSION}-gpu)
+  else()
+    set(TENSORFLOW_DIST ${TENSORFLOW_VERSION}-cpu)
   endif()
   set(TENSORFLOW_SRC_DIR ${CMAKE_CURRENT_LIST_DIR}/lib/${TENSORFLOW_DIST})
   # Retrieve pre-built binaries and headers if they dont exist
