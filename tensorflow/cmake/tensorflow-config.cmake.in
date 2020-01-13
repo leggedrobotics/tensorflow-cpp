@@ -1,5 +1,5 @@
 #=============================================================================
-# Copyright (C) 2019, Robotic Systems Lab, ETH Zurich
+# Copyright (C) 2020, Robotic Systems Lab, ETH Zurich
 # All rights reserved.
 # http://www.rsl.ethz.ch
 # https://bitbucket.org/leggedrobotics/tensorflow
