@@ -2,7 +2,7 @@
 <package format="2">
   <!--Package Header-->
   <name>eigen3</name>
-  <version>0.0.0</version>
+  <version>3.3.90</version>
   <description>The Eigen3 CMake package.</description>
   <license>Mozilla Public License Version 2.0</license>
   <url type="website">http://eigen.tuxfamily.org/</url>
