@@ -58,7 +58,7 @@ if(NOT DEFINED TENSORFLOW_ROOT)
   # Retrieve pre-built binaries and headers if they dont exist
   if(NOT EXISTS ${TENSORFLOW_SRC_DIR})
     set(TFLIBZIP ${TENSORFLOW_SRC_DIR}.zip)
-    set(TFLIBURL https://github.com/leggedrobotics/tensorflow-cpp/releases/download/v0.1.0/${TENSORFLOW_DIST}.zip)
+    set(TFLIBURL https://github.com/leggedrobotics/tensorflow-cpp/releases/download/v0.1.1/${TENSORFLOW_DIST}.zip)
     message(STATUS "Downloading binaries from '${TFLIBURL}'. Please wait ...")
     if(NOT EXISTS ${TFLIBZIP})
       file(DOWNLOAD ${TFLIBURL} ${TFLIBZIP})
