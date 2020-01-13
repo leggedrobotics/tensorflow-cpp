@@ -11,7 +11,7 @@
 # Authors: Vassilios Tsounis, tsounsiv@ethz.ch
 #=============================================================================
 cmake_minimum_required(VERSION 3.10)
-project(TensorFlow VERSION 0.0.0 LANGUAGES CXX)
+project(TensorFlow VERSION 0.1.1 LANGUAGES CXX)
 
 # Include CMake helper packages and utilities
 include(GNUInstallDirs)
