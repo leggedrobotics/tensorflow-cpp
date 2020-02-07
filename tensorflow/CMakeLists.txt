@@ -2,7 +2,7 @@
 # Copyright (C) 2020, Robotic Systems Lab, ETH Zurich
 # All rights reserved.
 # http://www.rsl.ethz.ch
-# https://bitbucket.org/leggedrobotics/tensorflow
+# https://github.com/leggedrobotics/tensorflow-cpp
 #
 # This software is distributed WITHOUT ANY WARRANTY; without even the
 # implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
