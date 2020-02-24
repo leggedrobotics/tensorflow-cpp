@@ -46,7 +46,7 @@ endif()
 
 get_target_property(TensorFlow_INCLUDE_DIRS TensorFlow::TensorFlow INTERFACE_INCLUDE_DIRECTORIES)
 get_target_property(TensorFlow_LIBRARIES TensorFlow::TensorFlow INTERFACE_LINK_LIBRARIES)
-list(APPEND eignets_LIBRARIES TensorFlow::TensorFlow)
+list(APPEND TensorFlow_LIBRARIES TensorFlow::TensorFlow)
 
 #==
 # Pacakge configuration check
