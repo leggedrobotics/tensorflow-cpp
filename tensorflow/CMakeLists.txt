@@ -11,7 +11,7 @@
 # Authors: Vassilios Tsounis, tsounsiv@ethz.ch
 #=============================================================================
 cmake_minimum_required(VERSION 3.10)
-project(TensorFlow VERSION 0.1.1 LANGUAGES CXX)
+project(TensorFlow VERSION 0.2.0 LANGUAGES CXX)
 
 # Include CMake helper packages and utilities
 include(GNUInstallDirs)
@@ -28,13 +28,7 @@ option(TF_USE_IN_SOURCE "Configures TensorFlow for in-source builds." OFF)
 # Dependencies
 #==
 
-# Eigen: A C++ template library for linear algebra
-find_package(Eigen3 REQUIRED HINTS ${Eigen3_HINT})
-if(EIGEN3_FOUND)
-  message(STATUS "Eigen3:")
-  message(STATUS "  Version: ${EIGEN3_VERSION_STRING}")
-  message(STATUS "  Includes: ${EIGEN3_INCLUDE_DIRS}")
-endif()
+# NONE
 
 #==
 # Build configuration
@@ -46,7 +40,7 @@ if(NOT DEFINED TENSORFLOW_ROOT)
   # NOTE: Users wanting to use other provided versions should specify
   # this at build time using command line: -DTENSORFLOW_VERSION=<VERSION>
   if(NOT DEFINED TENSORFLOW_VERSION)
-    set(TENSORFLOW_VERSION "1.13.2")
+    set(TENSORFLOW_VERSION "1.15.2")
   endif()
   # Sets to use CPU-only (default) or GPU-enabled (optional) builds
   if(TF_USE_GPU)
@@ -58,7 +52,7 @@ if(NOT DEFINED TENSORFLOW_ROOT)
   # Retrieve pre-built binaries and headers if they dont exist
   if(NOT EXISTS ${TENSORFLOW_SRC_DIR})
     set(TFLIBZIP ${TENSORFLOW_SRC_DIR}.zip)
-    set(TFLIBURL https://github.com/leggedrobotics/tensorflow-cpp/releases/download/v0.1.1/${TENSORFLOW_DIST}.zip)
+    set(TFLIBURL https://github.com/leggedrobotics/tensorflow-cpp/releases/download/v0.2.0/${TENSORFLOW_DIST}.zip)
     message(STATUS "Downloading binaries from '${TFLIBURL}'. Please wait ...")
     if(NOT EXISTS ${TFLIBZIP})
       file(DOWNLOAD ${TFLIBURL} ${TFLIBZIP})
@@ -90,8 +84,6 @@ foreach(subdir ${TENSORFLOW_HDRS})
   list(APPEND TENSORFLOW_SRC_HEADERS ${TENSORFLOW_SRC_DIR}/include/${subdir})
   list(APPEND TENSORFLOW_HEADERS ${TENSORFLOW_INSTALL_DIR}/include/${subdir})
 endforeach()
-list(APPEND TENSORFLOW_SRC_HEADERS ${TENSORFLOW_SRC_DIR}/include/bazel-genfiles)
-list(APPEND TENSORFLOW_HEADERS ${TENSORFLOW_INSTALL_DIR}/include/bazel-genfiles)
 
 # Collect a list of library binaries
 FILE(GLOB TENSORFLOW_LIBS RELATIVE ${TENSORFLOW_SRC_DIR}/lib ${TENSORFLOW_SRC_DIR}/lib/*)
@@ -105,11 +97,7 @@ add_library(${PROJECT_NAME} INTERFACE)
 target_include_directories(${PROJECT_NAME}
   INTERFACE
     $<BUILD_INTERFACE:${TENSORFLOW_SRC_DIR}/include>
-    $<BUILD_INTERFACE:${TENSORFLOW_SRC_DIR}/include/bazel-genfiles>
-    "$<BUILD_INTERFACE:${EIGEN3_INCLUDE_DIRS}>"
     $<INSTALL_INTERFACE:$<INSTALL_PREFIX>/include>
-    $<INSTALL_INTERFACE:$<INSTALL_PREFIX>/include/bazel-genfiles>
-    "$<INSTALL_INTERFACE:${EIGEN3_INCLUDE_DIRS}>"
 )
 target_link_libraries(${PROJECT_NAME} INTERFACE ${TENSORFLOW_LIBRARIES})
 add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})

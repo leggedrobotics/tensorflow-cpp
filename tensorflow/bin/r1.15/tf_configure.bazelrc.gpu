@@ -1,0 +1,38 @@
+# Configure paths to python interpreter
+build --host_force_python=PY2
+build --python_path="/usr/bin/python"
+
+# Define environment variables
+build --action_env PYTHON_BIN_PATH="/usr/bin/python"
+build --action_env PYTHON_LIB_PATH="/usr/local/lib/python2.7/dist-packages"
+build --action_env CUDA_TOOLKIT_PATH="/usr/local/cuda"
+build --action_env TF_CUDA_COMPUTE_CAPABILITIES="5.0,6.1,7.0,7.2,7.5"
+build --action_env GCC_HOST_COMPILER_PATH="/usr/bin/gcc"
+build --action_env TF_CONFIGURE_IOS="0"
+build --action_env LD_LIBRARY_PATH=":$(HOME)/.local/lib"
+
+# Add XLA options
+# NOTE: This is already in the .bazelrc file but we redefine it here for safe measure
+# NOTE: Actually, .bazelrc defines `build:xla --define=with_xla_support=true`, which is slightly different
+build:xla --define with_xla_support=true
+
+# Define optimization options
+build:opt --host_copt=-march=native
+build:opt --define with_default_optimizations=true
+build:opt --copt=-Wno-sign-compare
+build:opt --copt=-march=native
+build:opt --copt=-mtune=native
+build:opt --copt=-mavx
+build:opt --copt=-mavx2
+build:opt --copt=-mfma
+build:opt --copt=-mfpmath=both
+build:opt --copt=-fPIC
+
+# Define which build options are enabled
+build --config=opt
+build --config=xla
+build --config=cuda
+# build --config=c++1z
+# build --config=monolithic
+
+
