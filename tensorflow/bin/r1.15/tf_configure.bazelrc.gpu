@@ -34,5 +34,3 @@ build --config=xla
 build --config=cuda
 # build --config=c++1z
 # build --config=monolithic
-
-
