@@ -20,7 +20,7 @@ function download_from_url() {
     EIGEN_ARCHIVE_URL=$1
     EIGEN_ARCHIVE_NAME="eigen-${EIGEN_COMMIT}"
     EIGEN_ARCHIVE="${EIGEN_ARCHIVE_NAME}.${EIGEN_ARCHIVE_TYPE}"
-    echo "Install: Downloading Eigen from '${EIGEN_ARCHIVE}'";
+    echo "Install: Downloading Eigen from '${EIGEN_ARCHIVE_URL}'";
     echo "Install: Target directory is '${EIGEN_DIR}'";
     echo "Install: Target name is '${EIGEN_ARCHIVE}'";
     wget -v ${EIGEN_ARCHIVE_URL} -O "${EIGEN_ARCHIVE}"
@@ -31,11 +31,18 @@ function download_from_url() {
 # Start
 #==
 
-# Set the default version of TensorFlow
-if [[ -z ${TENSORFLOW_VERSION} ]]; then TENSORFLOW_VERSION="1.15"; fi
-
 # Set the source directory of this file
 EIGEN_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
+# First check if an existing directory exists
+if [[ -d "${EIGEN_DIR}/eigen3" ]];
+then
+  echo "Install: '${EIGEN_DIR}/eigen3' already exists. Please remove it before continuing.";
+  exit;
+fi
+
+# Set the default version of TensorFlow
+if [[ -z ${TENSORFLOW_VERSION} ]]; then TENSORFLOW_VERSION="1.15"; fi
 
 # Set default install location
 EIGEN_INSTALL_PREFIX="${HOME}/.local"
@@ -71,15 +78,19 @@ wget "https://raw.githubusercontent.com/tensorflow/tensorflow/r${TENSORFLOW_VERS
 patch -p1 < gpu_packet_math.patch
 cd ${EIGEN_DIR}
 
-# Step 5.: Removing existing Eigen installation
-echo "Install: Applying TensorFlow patch to '${EIGEN_DIR}/eigen3'"
-rm -rf ${EIGEN_INSTALL_PREFIX}/include/eigen3 ${EIGEN_INSTALL_PREFIX}/share/eigen3 ${EIGEN_INSTALL_PREFIX}/share/pkgconfig/eigen3.pc
+# Steps 5+6 are optional
+if [[ $1 == "--run-cmake" ]];
+then
+  # Step 5.: Removing existing Eigen installation
+  echo "Install: Applying TensorFlow patch to '${EIGEN_DIR}/eigen3'"
+  rm -rf ${EIGEN_INSTALL_PREFIX}/include/eigen3 ${EIGEN_INSTALL_PREFIX}/share/eigen3 ${EIGEN_INSTALL_PREFIX}/share/pkgconfig/eigen3.pc
 
-# Step 6.: Build and install Eigen
-echo "Install: Building and installing Eigen at '${EIGEN_INSTALL_PREFIX}'"
-mkdir -p ${EIGEN_DIR}/eigen3/build
-cd ${EIGEN_DIR}/eigen3/build
-cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${EIGEN_INSTALL_PREFIX}
-make install -j
+  # Step 6.: Build and install Eigen
+  echo "Install: Building and installing Eigen at '${EIGEN_INSTALL_PREFIX}'"
+  mkdir -p ${EIGEN_DIR}/eigen3/build
+  cd ${EIGEN_DIR}/eigen3/build
+  cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${EIGEN_INSTALL_PREFIX}
+  make install -j
+fi
 
 # EOF

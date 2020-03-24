@@ -11,7 +11,10 @@
 # Authors: Vassilios Tsounis, tsounisv@ethz.ch
 #=============================================================================
 cmake_minimum_required(VERSION 3.10)
-project(TensorFlowExamples VERSION 0.2.0 LANGUAGES CXX)
+project(tensorflow_examples VERSION 0.2.0 LANGUAGES CXX)
+
+# Include GNU standard install directories module
+include(GNUInstallDirs)
 
 #==
 # Dependencies
@@ -23,10 +26,6 @@ find_package(TensorFlow CONFIG REQUIRED)
 # Targets
 #==
 
-add_executable(tf_example_session src/example_session.cc)
-target_link_libraries(tf_example_session PUBLIC TensorFlow::TensorFlow)
-target_compile_features(tf_example_session PRIVATE cxx_std_14)
-
 add_executable(tf_example_trainer src/example_trainer.cc)
 target_link_libraries(tf_example_trainer PUBLIC TensorFlow::TensorFlow)
 target_compile_features(tf_example_trainer PRIVATE cxx_std_14)
@@ -36,8 +35,8 @@ target_compile_features(tf_example_trainer PRIVATE cxx_std_14)
 #==
 
 install(
-  TARGETS tf_example_session tf_example_trainer
-  RUNTIME DESTINATION bin
+  TARGETS tf_example_trainer
+  RUNTIME DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}
 )
 
 # EOF
