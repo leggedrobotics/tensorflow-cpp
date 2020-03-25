@@ -17,13 +17,23 @@ This repository provides pre-built TensorFlow for C/C++ (headers + libraries) an
 
 This repository provides TensorFlow libraries with the following specifications:  
 
-  - Provided versions: `1.13.2` (Default)
+  - Provided versions: `1.15.2` (Default) and `1.13.2`
   - Supports Ubuntu 18.04 LTS (GCC >=7.4).  
   - Provides variants for CPU-only and Nvidia GPU respectively.  
   - All variants are built with full CPU optimizations available for `amd64` architectures.  
   - GPU variants are built to support compute capabilities: `5.0`, `6.1`, `7.0`, `7.2`, `7.5`  
 
 **NOTE:** This repository does not include or bundle the source TensorFlow [repository](https://github.com/tensorflow/tensorflow).
+
+**NOTE:** As each pre-built distribution of TensorFlow is quite large (~1GB), the primary CMake script in `tensorflow/CMakeLists.txt`  will automatically download and unpack the configured variant of TensorFlow the first time the package is built.
+
+A complete CMake [example](https://github.com/leggedrobotics/tensorflow-cpp/tree/master/examples) example is provided for demonstrating how to write dependent packages.
+
+Moreover, we provide additional scripts and tooling for:  
+
+* Downloading, patching and installing [Eigen](http://eigen.tuxfamily.org/).
+* Building `tensorflow` from source and extracting all library binaries and headers.
+
 
 ## Install
 
@@ -38,13 +48,21 @@ git clone git@github.com:leggedrobotics/tensorflow-cpp.git
 
 ### Eigen
 
-To install the special version of Eigen requried by TensorFlow that we also bundle in this repository:
-```bash
-cd tensorflow/eigen
-mkdir build && cd build
-cmake -DCMAKE_INSTALL_PREFIX=~/.local -DCMAKE_BUILD_TYPE=Release ..
-make install -j
+Each distribution of `tensorflow>=r1.13` requires a special patched version of the [Eigen](http://eigen.tuxfamily.org/) header-only library. As of `v0.2.0` of this repository, the aforementioned patched header files of Eigen are already included in the the headers downloaded by `tensorflow/CMakeLists.txt`. However, in certain cases, code in some package `A` using `tensorflow-cpp` might interface with some other code in an external package `B` that also uses Eigen.  Thus, in order to ensure that `A` and `B` work together properly, we must build both packages using the same version of Eigen. 
+
+For such cases, we provide an `bash` script in `tensorflow-cpp/eigen/install.sh`.  
+
+To download, unpack and patch Eigen:
+```commandline
+cd tensorflow-cpp/eigen
+install.sh
 ```
+To additionally build and install Eigen, the `--run-cmake` argument can be used:
+```commandline
+cd tensorflow-cpp/eigen
+install.sh --run-cmake
+```
+
 **NOTE:** We recommend installing to `~/.local` in order to prevent conflicts with other version of Eigen which may be installed via `apt`. Eigen exports its package during the build step, so CMake will default to finding the one we just installed unless a `HINT` is used or `CMAKE_PREFIX_PATH` is set to another location.  
 
 ### TensorFlow
