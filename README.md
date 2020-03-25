@@ -23,9 +23,9 @@ This repository provides TensorFlow libraries with the following specifications:
   - All variants are built with full CPU optimizations available for `amd64` architectures.  
   - GPU variants are built to support compute capabilities: `5.0`, `6.1`, `7.0`, `7.2`, `7.5`  
 
-**NOTE:** This repository does not include or bundle the source TensorFlow [repository](https://github.com/tensorflow/tensorflow).
+**NOTE:** This repository does not include the [TensorFlow](https://github.com/tensorflow/tensorflow) source files.
 
-**NOTE:** As each pre-built distribution of TensorFlow is quite large (~1GB), the primary CMake script in `tensorflow/CMakeLists.txt`  will automatically download and unpack the configured variant of TensorFlow the first time the package is built.
+**NOTE:** As each pre-built distribution of TensorFlow is quite large (~1GB), the `tensorflow/CMakeLists.txt` CMake script will automatically download and unpack the archive the first time the package is built.
 
 A complete CMake [example](https://github.com/leggedrobotics/tensorflow-cpp/tree/master/examples) example is provided for demonstrating how to write dependent packages.
 
@@ -88,31 +88,6 @@ For example, when including as part of larger CMake build or in a Catkin workspa
 ln -s ~/git/tensorflow/tensorflow ~/catkin_ws/src/
 ```
 
-### Known Issues:
-
-* If you are experiencing the following error:
-```commandline
-/usr/include/pcl-1.8/pcl/impl/point_types.hpp:684:5: error: 'alignas' attribute only applies to variables, data members and tag types [clang-diagnostic-error]
-  } EIGEN_ALIGN16;
-    ^
-```
-This is a [known bug](https://github.com/PointCloudLibrary/pcl/blob/master/CHANGES.md#libpcl_2d) in PCL which was fixed in PR [#3237](https://github.com/PointCloudLibrary/pcl/pull/3237).
-
-**Fixes:**
-1. Either install `pcl>=v1.10.0`.
-2. or hack the following change into `/usr/include/pcl-1.8/pcl/impl/point_types.hpp` directly by changing:
-```c++
-670: struct _PointXYZHSV
-...
-684: } EIGEN_ALIGN16;
-```
-to
-```c++
-670: struct EIGEN_ALIGN16 _PointXYZHSV
-...
-684: };
-```
-
 ## Use
 
 TensorFlow CMake can be included in other projects either using the `find_package` command:
@@ -138,7 +113,7 @@ target_compile_features(tf_hello PRIVATE cxx_std_14)
 ```
 **NOTE:** For more information on using CMake targets please refer to this excellent [article](https://pabloariasal.github.io/2018/02/19/its-time-to-do-cmake-right/).
 
-A complete [example](https://github.com/leggedrobotics/tensorflow-cpp/tree/master/tensorflow/examples) is included in this repository to provide boilerplate CMake for developers of dependent projects and packages.
+Please refer to our complete [example](https://github.com/leggedrobotics/tensorflow-cpp/tree/master/tensorflow/examples) for details.
 
 ## Customize
 
