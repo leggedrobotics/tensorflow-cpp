@@ -113,7 +113,7 @@ target_compile_features(tf_hello PRIVATE cxx_std_14)
 ```
 **NOTE:** For more information on using CMake targets please refer to this excellent [article](https://pabloariasal.github.io/2018/02/19/its-time-to-do-cmake-right/).
 
-Please refer to our complete [example](https://github.com/leggedrobotics/tensorflow-cpp/tree/master/tensorflow/examples) for details.
+Please refer to our complete [example](https://github.com/leggedrobotics/tensorflow-cpp/tree/master/examples) for details.
 
 ## Customize
 
@@ -128,7 +128,7 @@ cmake -DTENSORFLOW_ROOT=~/.tensorflow/lib -DCMAKE_INSTALL_PREFIX=~/.local -DCMAK
 
 ## Issues
 
-If experiencing any issues please first take a look at our [ISSUES.md](https://github.com/leggedrobotics/tensorflow-cpp/tree/master/tensorflow/ISSUES.md) file. If you are experiencing something we have not accounted for please create a new repository issue.
+If experiencing any issues please first take a look at our [ISSUES.md](https://github.com/leggedrobotics/tensorflow-cpp/blob/master/ISSUES.md) file. If you are experiencing something we have not accounted for please create a new repository issue.
 
 ## License
 
