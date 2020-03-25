@@ -1,2 +1,3 @@
-eigen/build
 tensorflow/build
+eigen/eigen3
+*.tar.gz

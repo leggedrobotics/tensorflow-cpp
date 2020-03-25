@@ -11,7 +11,7 @@
 # Authors: Vassilios Tsounis, tsounsiv@ethz.ch
 #=============================================================================
 cmake_minimum_required(VERSION 3.10)
-project(TensorFlow VERSION 0.1.1 LANGUAGES CXX)
+project(TensorFlow VERSION 0.2.0 LANGUAGES CXX)
 
 # Include CMake helper packages and utilities
 include(GNUInstallDirs)
@@ -28,13 +28,7 @@ option(TF_USE_IN_SOURCE "Configures TensorFlow for in-source builds." OFF)
 # Dependencies
 #==
 
-# Eigen: A C++ template library for linear algebra
-find_package(Eigen3 REQUIRED HINTS ${Eigen3_HINT})
-if(EIGEN3_FOUND)
-  message(STATUS "Eigen3:")
-  message(STATUS "  Version: ${EIGEN3_VERSION_STRING}")
-  message(STATUS "  Includes: ${EIGEN3_INCLUDE_DIRS}")
-endif()
+# NONE
 
 #==
 # Build configuration
@@ -46,7 +40,7 @@ if(NOT DEFINED TENSORFLOW_ROOT)
   # NOTE: Users wanting to use other provided versions should specify
   # this at build time using command line: -DTENSORFLOW_VERSION=<VERSION>
   if(NOT DEFINED TENSORFLOW_VERSION)
-    set(TENSORFLOW_VERSION "1.13.2")
+    set(TENSORFLOW_VERSION "1.15.2")
   endif()
   # Sets to use CPU-only (default) or GPU-enabled (optional) builds
   if(TF_USE_GPU)
@@ -54,18 +48,36 @@ if(NOT DEFINED TENSORFLOW_ROOT)
   else()
     set(TENSORFLOW_DIST ${TENSORFLOW_VERSION}-cpu)
   endif()
-  set(TENSORFLOW_SRC_DIR ${CMAKE_CURRENT_LIST_DIR}/lib/${TENSORFLOW_DIST})
   # Retrieve pre-built binaries and headers if they dont exist
+  set(TENSORFLOW_SRC_DIR ${CMAKE_CURRENT_LIST_DIR}/lib/${TENSORFLOW_DIST})
   if(NOT EXISTS ${TENSORFLOW_SRC_DIR})
-    set(TFLIBZIP ${TENSORFLOW_SRC_DIR}.zip)
-    set(TFLIBURL https://github.com/leggedrobotics/tensorflow-cpp/releases/download/v0.1.1/${TENSORFLOW_DIST}.zip)
-    message(STATUS "Downloading binaries from '${TFLIBURL}'. Please wait ...")
-    if(NOT EXISTS ${TFLIBZIP})
-      file(DOWNLOAD ${TFLIBURL} ${TFLIBZIP})
+    # Determine the URL for the archive download based on the desired version
+    set(TENSORFLOW_ARCHIVE_SRC_URL "https://github.com/leggedrobotics/tensorflow-cpp/releases/download")
+    if(${TENSORFLOW_VERSION} STREQUAL "1.15.2")
+      set(TENSORFLOW_ARCHIVE_URL "${TENSORFLOW_ARCHIVE_SRC_URL}/v0.2.0/${TENSORFLOW_DIST}.zip")
+    elseif(${TENSORFLOW_VERSION} STREQUAL "1.13.2")
+      set(TENSORFLOW_ARCHIVE_URL "${TENSORFLOW_ARCHIVE_SRC_URL}/v0.1.1/${TENSORFLOW_DIST}.zip")
+    else()
+      message(FATAL_ERROR "tensorflow-cpp: Version '${TENSORFLOW_VERSION}' is not supported.")
     endif()
-    execute_process(COMMAND ${CMAKE_COMMAND} -E tar -xf ${TFLIBZIP} WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/lib)
+    # Set the archive file
+    set(TENSORFLOW_ARCHIVE_ZIP ${TENSORFLOW_SRC_DIR}.zip)
+    # Download the archive if it's not present in the library directory
+    if(NOT EXISTS ${TENSORFLOW_ARCHIVE_ZIP})
+      message(STATUS "tensorflow-cpp: Downloading binaries from '${TENSORFLOW_ARCHIVE_URL}' as '${TENSORFLOW_ARCHIVE_ZIP}'. Please wait until completed ...")
+      file(DOWNLOAD ${TENSORFLOW_ARCHIVE_URL} ${TENSORFLOW_ARCHIVE_ZIP} SHOW_PROGRESS STATUS TENSORFLOW_ARCHIVE_STATUS)
+      list(GET ${TENSORFLOW_ARCHIVE_STATUS} 0 TENSORFLOW_ARCHIVE_STATUS_RESULT)
+      if (${TENSORFLOW_ARCHIVE_STATUS_RESULT})
+        list(GET ${TENSORFLOW_ARCHIVE_STATUS} 1 TENSORFLOW_ARCHIVE_STATUS_ERROR)
+        message(FATAL_ERROR "tensorflow-cpp: Failed to download '${TENSORFLOW_ARCHIVE_URL}': Error: ${TENSORFLOW_ARCHIVE_STATUS_ERROR}")
+      endif ()
+      message(STATUS "tensorflow-cpp: Completed download of '${TENSORFLOW_ARCHIVE_URL}'.")
+    endif()
+    # Extract the downloaded archive
+    message(STATUS "tensorflow-cpp: Extracting '${TENSORFLOW_ARCHIVE_URL}' ...")
+    execute_process(COMMAND ${CMAKE_COMMAND} -E tar -xf ${TENSORFLOW_ARCHIVE_ZIP} WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/lib)
+    message(STATUS "tensorflow-cpp: Completed extraction of '${TENSORFLOW_ARCHIVE_URL}'.")
   endif()
-  message(STATUS "Done.")
   get_filename_component(TENSORFLOW_SRC_DIR ${TENSORFLOW_SRC_DIR} REALPATH)
 else()
   # Uses user-specified (custom) build
@@ -88,13 +100,11 @@ endif()
 file(GLOB TENSORFLOW_HDRS RELATIVE ${TENSORFLOW_SRC_DIR}/include ${TENSORFLOW_SRC_DIR}/include/*)
 foreach(subdir ${TENSORFLOW_HDRS})
   list(APPEND TENSORFLOW_SRC_HEADERS ${TENSORFLOW_SRC_DIR}/include/${subdir})
-  list(APPEND TENSORFLOW_HEADERS ${TENSORFLOW_INSTALL_DIR}/include/${subdir})
+  list(APPEND TENSORFLOW_HEADERS ${TENSORFLOW_INSTALL_DIR}/include/tensorflow/${subdir})
 endforeach()
-list(APPEND TENSORFLOW_SRC_HEADERS ${TENSORFLOW_SRC_DIR}/include/bazel-genfiles)
-list(APPEND TENSORFLOW_HEADERS ${TENSORFLOW_INSTALL_DIR}/include/bazel-genfiles)
 
 # Collect a list of library binaries
-FILE(GLOB TENSORFLOW_LIBS RELATIVE ${TENSORFLOW_SRC_DIR}/lib ${TENSORFLOW_SRC_DIR}/lib/*)
+file(GLOB TENSORFLOW_LIBS RELATIVE ${TENSORFLOW_SRC_DIR}/lib ${TENSORFLOW_SRC_DIR}/lib/*)
 foreach(lib ${TENSORFLOW_LIBS})
   list(APPEND TENSORFLOW_SRC_LIBRARIES ${TENSORFLOW_SRC_DIR}/lib/${lib})
   list(APPEND TENSORFLOW_LIBRARIES ${TENSORFLOW_INSTALL_DIR}/lib/${lib})
@@ -105,11 +115,7 @@ add_library(${PROJECT_NAME} INTERFACE)
 target_include_directories(${PROJECT_NAME}
   INTERFACE
     $<BUILD_INTERFACE:${TENSORFLOW_SRC_DIR}/include>
-    $<BUILD_INTERFACE:${TENSORFLOW_SRC_DIR}/include/bazel-genfiles>
-    "$<BUILD_INTERFACE:${EIGEN3_INCLUDE_DIRS}>"
-    $<INSTALL_INTERFACE:$<INSTALL_PREFIX>/include>
-    $<INSTALL_INTERFACE:$<INSTALL_PREFIX>/include/bazel-genfiles>
-    "$<INSTALL_INTERFACE:${EIGEN3_INCLUDE_DIRS}>"
+    $<INSTALL_INTERFACE:$<INSTALL_PREFIX>/include/tensorflow>
 )
 target_link_libraries(${PROJECT_NAME} INTERFACE ${TENSORFLOW_LIBRARIES})
 add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
@@ -122,7 +128,7 @@ install(TARGETS ${PROJECT_NAME}
   EXPORT ${PROJECT_NAME}-targets
   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-  INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+  INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/tensorflow
 )
 
 export(TARGETS ${PROJECT_NAME}
@@ -176,7 +182,7 @@ if (NOT TF_USE_IN_SOURCE)
     DIRECTORY
       ${TENSORFLOW_SRC_HEADERS}
     DESTINATION
-      ${CMAKE_INSTALL_INCLUDEDIR}
+      ${CMAKE_INSTALL_INCLUDEDIR}/tensorflow
   )
   install(
     FILES
