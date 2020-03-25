@@ -126,6 +126,10 @@ If a specialized build of TensorFlow (e.g. different verion of CUDA, NVIDIA Comp
 cmake -DTENSORFLOW_ROOT=~/.tensorflow/lib -DCMAKE_INSTALL_PREFIX=~/.local -DCMAKE_BUILD_TYPE=Release ..
 ```
 
+## Issues
+
+If experiencing any issues please first take a look at our [ISSUES.md](https://github.com/leggedrobotics/tensorflow-cpp/tree/master/tensorflow/ISSUES.md) file. If you are experiencing something we have not accounted for please create a new repository issue.
+
 ## License
 
 [Apache License 2.0](LICENSE)
