@@ -71,7 +71,7 @@ rm -rf eigen-${EIGEN_ARCHIVE_NAME} ${EIGEN_ARCHIVE}
 echo "Install: Adding Catkin package file to '${EIGEN_DIR}/eigen3'"
 cp ${EIGEN_DIR}/package.xml.in ${EIGEN_DIR}/eigen3/package.xml
 
-# Step 4.: TODO: Apply patch from tensorflow archives
+# Step 4.: Apply patch from tensorflow archives
 echo "Install: Applying TensorFlow patch to '${EIGEN_DIR}/eigen3'"
 cd ${EIGEN_DIR}/eigen3
 wget "https://raw.githubusercontent.com/tensorflow/tensorflow/r${TENSORFLOW_VERSION}/third_party/eigen3/gpu_packet_math.patch"
