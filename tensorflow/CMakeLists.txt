@@ -49,7 +49,7 @@ if(NOT DEFINED TENSORFLOW_ROOT)
     set(TENSORFLOW_DIST ${TENSORFLOW_VERSION}-cpu)
   endif()
   # Retrieve pre-built binaries and headers if they dont exist
-  set(TENSORFLOW_SRC_DIR ${CMAKE_CURRENT_LIST_DIR}/lib/${TENSORFLOW_DIST})
+  set(TENSORFLOW_SRC_DIR ${CMAKE_CURRENT_BINARY_DIR}/lib/${TENSORFLOW_DIST})
   if(NOT EXISTS ${TENSORFLOW_SRC_DIR})
     # Determine the URL for the archive download based on the desired version
     set(TENSORFLOW_ARCHIVE_SRC_URL "https://github.com/leggedrobotics/tensorflow-cpp/releases/download")
@@ -75,7 +75,7 @@ if(NOT DEFINED TENSORFLOW_ROOT)
     endif()
     # Extract the downloaded archive
     message(STATUS "tensorflow-cpp: Extracting '${TENSORFLOW_ARCHIVE_URL}' ...")
-    execute_process(COMMAND ${CMAKE_COMMAND} -E tar -xf ${TENSORFLOW_ARCHIVE_ZIP} WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/lib)
+    execute_process(COMMAND ${CMAKE_COMMAND} -E tar -xf ${TENSORFLOW_ARCHIVE_ZIP} WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/lib)
     message(STATUS "tensorflow-cpp: Completed extraction of '${TENSORFLOW_ARCHIVE_URL}'.")
   endif()
   get_filename_component(TENSORFLOW_SRC_DIR ${TENSORFLOW_SRC_DIR} REALPATH)
