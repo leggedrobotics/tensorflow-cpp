@@ -2,10 +2,10 @@
 <package format="2">
   <!--Package Header-->
   <name>tensorflow_examples</name>
-  <version>0.0.0</version>
-  <description>The tensorflow_example CMake package.</description>
-  <license>Proprietary</license>
-  <url type="website">http://bitbucket.org/leggedrobotics/tensorflow</url>
+  <version>0.2.0</version>
+  <description>Examples for using the TensorFlow CMake package.</description>
+  <license>Apache 2.0</license>
+  <url type="website">https://github.com/leggedrobotics/tensorflow-cpp</url>
   <maintainer email="tsounisv@ethz.ch">Vassilios Tsounis</maintainer>
   <!--Package Dependencies-->
   <buildtool_depend>cmake</buildtool_depend>

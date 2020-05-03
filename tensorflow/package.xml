@@ -2,9 +2,9 @@
 <package format="2">
   <!--Package Header-->
   <name>tensorflow</name>
-  <version>0.1.1</version>
-  <description>The TensorFlow Catkin-ized CMake package.</description>
-  <license>Proprietary</license>
+  <version>0.2.0</version>
+  <description>The TensorFlow CMake package for C/C++ development.</description>
+  <license>Apache 2.0</license>
   <url type="website">https://github.com/leggedrobotics/tensorflow-cpp</url>
   <maintainer email="tsounisv@ethz.ch">Vassilios Tsounis</maintainer>
   <!--Package Dependencies-->
