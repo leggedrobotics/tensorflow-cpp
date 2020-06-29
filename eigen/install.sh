@@ -44,9 +44,6 @@ fi
 # Set the default version of TensorFlow
 if [[ -z ${TENSORFLOW_VERSION} ]]; then TENSORFLOW_VERSION="1.15"; fi
 
-# Set default install location
-EIGEN_INSTALL_PREFIX="${HOME}/.local"
-
 # Set default commit version
 if [[ -z ${EIGEN_COMMIT} ]]; then EIGEN_COMMIT="49177915a14a"; fi
 
@@ -81,6 +78,15 @@ cd ${EIGEN_DIR}
 # Steps 5+6 are optional
 if [[ $1 == "--run-cmake" ]];
 then
+
+  # Set install location
+  if [[ -z "$2" ]]
+  then
+    EIGEN_INSTALL_PREFIX="${HOME}/.local"
+  else
+    EIGEN_INSTALL_PREFIX="$2"
+  fi
+
   # Step 5.: Removing existing Eigen installation
   echo "Install: Applying TensorFlow patch to '${EIGEN_DIR}/eigen3'"
   rm -rf ${EIGEN_INSTALL_PREFIX}/include/eigen3 ${EIGEN_INSTALL_PREFIX}/share/eigen3 ${EIGEN_INSTALL_PREFIX}/share/pkgconfig/eigen3.pc
