@@ -78,7 +78,7 @@ if(NOT DEFINED TENSORFLOW_ROOT)
     execute_process(COMMAND ${CMAKE_COMMAND} -E tar -xf ${TENSORFLOW_ARCHIVE_ZIP} WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/lib)
     message(STATUS "tensorflow-cpp: Completed extraction of '${TENSORFLOW_ARCHIVE_URL}'.")
   endif()
-  get_filename_component(TENSORFLOW_SRC_DIR ${TENSORFLOW_SRC_DIR} REALPATH)
+  get_filename_component(TENSORFLOW_SRC_DIR ${TENSORFLOW_SRC_DIR} ABSOLUTE)
 else()
   # Uses user-specified (custom) build
   set(TENSORFLOW_VERSION "Custom")
