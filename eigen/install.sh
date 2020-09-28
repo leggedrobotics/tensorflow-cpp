@@ -20,10 +20,13 @@ function download_from_url() {
     EIGEN_ARCHIVE_URL=$1
     EIGEN_ARCHIVE_NAME="eigen-${EIGEN_COMMIT}"
     EIGEN_ARCHIVE="${EIGEN_ARCHIVE_NAME}.${EIGEN_ARCHIVE_TYPE}"
+    echo "DOWNDLOAD: ${EIGEN_ARCHIVE}"
     echo "Install: Downloading Eigen from '${EIGEN_ARCHIVE_URL}'";
     echo "Install: Target directory is '${EIGEN_DIR}'";
     echo "Install: Target name is '${EIGEN_ARCHIVE}'";
     wget -v ${EIGEN_ARCHIVE_URL} -O "${EIGEN_ARCHIVE}"
+  else
+    echo "Install: Archive link is invalid for: '$1'";
   fi
 }
 
@@ -53,10 +56,8 @@ if [[ "${TENSORFLOW_VERSION}" == "1.15" && -z ${EIGEN_COMMIT} ]]; then EIGEN_COM
 
 # Step 1.: Download the archive
 EIGEN_ARCHIVE_TYPE="tar.gz"
-EIGEN_BITBUCKET_ARCHIVE="https://bitbucket.org/eigen/eigen/get/${EIGEN_COMMIT}.${EIGEN_ARCHIVE_TYPE}"
-EIGEN_GITLAB_ARCHIVE="https://gitlab.com/libeigen/eigen/-/archive/${EIGEN_COMMIT}/eigen-${EIGEN_COMMIT}.${EIGEN_ARCHIVE_TYPE}"
-download_from_url ${EIGEN_GITLAB_ARCHIVE}
-if [[ -z ${EIGEN_ARCHIVE_URL} ]]; then download_from_url ${EIGEN_BITBUCKET_ARCHIVE}; fi
+EIGEN_ARCHIVE_URL="https://storage.googleapis.com/mirror.tensorflow.org/bitbucket.org/eigen/eigen/get/${EIGEN_COMMIT}.${EIGEN_ARCHIVE_TYPE}"
+download_from_url ${EIGEN_ARCHIVE_URL}
 
 # Step 3.: Unpackage archive into ./eigen3
 echo "Install: Unpacking Eigen into destination '${EIGEN_DIR}/eigen3'"
