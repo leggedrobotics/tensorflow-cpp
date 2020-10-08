@@ -17,8 +17,10 @@ This repository provides pre-built TensorFlow for C/C++ (headers + libraries) an
 
 This repository provides TensorFlow libraries with the following specifications:  
 
-  - Provided versions: `1.15.2` (Default) and `1.13.2`
-  - Supports Ubuntu 18.04 LTS (GCC >=7.4).  
+  - Provided versions: `1.15.2` (Default) and `1.13.2`  
+  - Supported for Ubuntu 18.04 LTS.  
+  - Built with GCC>=7.5.  
+  - Built with support for C++14.  
   - Provides variants for CPU-only and Nvidia GPU respectively.  
   - All variants are built with full CPU optimizations available for `amd64` architectures.  
   - GPU variants are built to support compute capabilities: `5.0`, `6.1`, `7.0`, `7.2`, `7.5`  
@@ -48,7 +50,7 @@ git clone git@github.com:leggedrobotics/tensorflow-cpp.git
 
 ### Eigen
 
-Each distribution of `tensorflow>=r1.13` requires a special patched version of the [Eigen](http://eigen.tuxfamily.org/) header-only library. As of `v0.2.0` of this repository, the aforementioned patched header files of Eigen are already included in the the headers downloaded by `tensorflow/CMakeLists.txt`. However, in certain cases, code in some package `A` using `tensorflow-cpp` might interface with some other code in an external package `B` that also uses Eigen.  Thus, in order to ensure that `A` and `B` work together properly, we must build both packages using the same version of Eigen. 
+Each distribution of `tensorflow>=r1.13` requires a special patched version of the [Eigen](http://eigen.tuxfamily.org/) header-only library. As of `v0.2.0` of this repository, the aforementioned patched header files of Eigen are already included in the the headers downloaded by `tensorflow/CMakeLists.txt`. However, in certain cases, code in some package `A` using `tensorflow-cpp` might interface with some other code in an external package `B` that also uses Eigen.  Thus, in order to ensure that `A` and `B` work together properly, we must build both packages using the same version of Eigen.
 
 For such cases, we provide an `bash` script in `tensorflow-cpp/eigen/install.sh`.  
 

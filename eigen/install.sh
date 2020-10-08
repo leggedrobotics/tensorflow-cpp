@@ -89,11 +89,11 @@ then
   fi
 
   # Step 5.: Removing existing Eigen installation
-  echo "Install: Applying TensorFlow patch to '${EIGEN_DIR}/eigen3'"
+  echo "Install: Removing previous installation of Eigen3 at '${EIGEN_INSTALL_PREFIX}'."
   rm -rf ${EIGEN_INSTALL_PREFIX}/include/eigen3 ${EIGEN_INSTALL_PREFIX}/share/eigen3 ${EIGEN_INSTALL_PREFIX}/share/pkgconfig/eigen3.pc
 
   # Step 6.: Build and install Eigen
-  echo "Install: Building and installing Eigen at '${EIGEN_INSTALL_PREFIX}'"
+  echo "Install: Building and installing Eigen3 at '${EIGEN_INSTALL_PREFIX}'."
   mkdir -p ${EIGEN_DIR}/eigen3/build
   cd ${EIGEN_DIR}/eigen3/build
   cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${EIGEN_INSTALL_PREFIX}

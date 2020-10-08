@@ -27,8 +27,8 @@ find_package(TensorFlow CONFIG REQUIRED)
 #==
 
 add_executable(tf_example_trainer src/example_trainer.cc)
-target_link_libraries(tf_example_trainer PUBLIC TensorFlow::TensorFlow)
-target_compile_features(tf_example_trainer PRIVATE cxx_std_14)
+target_link_libraries(tf_example_trainer PRIVATE TensorFlow::TensorFlow)
+target_compile_features(tf_example_trainer PRIVATE cxx_std_14) # TODO: C++17
 
 #==
 # Installation

@@ -19,7 +19,6 @@
 # In addition, following variables will also be defined:
 #    TensorFlow_FOUND
 #    TensorFlow_VERSION
-#    TensorFlow_CPU
 #    TensorFlow_DIR
 #    TensorFlow_INCLUDE_DIRS
 #    TensorFlow_LIBRARIES
