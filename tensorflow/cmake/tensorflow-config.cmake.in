@@ -36,21 +36,23 @@ set(TensorFlow_VERSION @CONFIG_VERSION@)
 set(TensorFlow_DIR @CONFIG_DIRECTORY@)
 
 #==
-# Pacakge contents
+# Contents
 #==
 
+# Load modern CMake targets.
 if(NOT TARGET TensorFlow::TensorFlow)
   include(${CMAKE_CURRENT_LIST_DIR}/TensorFlow-targets.cmake)
 endif()
 
+# Also extract legacy-style CMake variables.
 get_target_property(TensorFlow_INCLUDE_DIRS TensorFlow::TensorFlow INTERFACE_INCLUDE_DIRECTORIES)
 get_target_property(TensorFlow_LIBRARIES TensorFlow::TensorFlow INTERFACE_LINK_LIBRARIES)
-list(APPEND TensorFlow_LIBRARIES TensorFlow::TensorFlow)
 
 #==
-# Pacakge configuration check
+# Configuration Checks
 #==
 
+# Perform check to ensure that all required variables to be exported have been set.
 find_package_handle_standard_args(TensorFlow
   REQUIRED_VARS
     TensorFlow_VERSION
@@ -59,6 +61,7 @@ find_package_handle_standard_args(TensorFlow
     TensorFlow_LIBRARIES
 )
 
+# Print some useful information if the package was imported successfully.
 if(TensorFlow_FOUND)
   message(STATUS "TensorFlow:")
   message(STATUS "  Version: ${TensorFlow_VERSION}")
@@ -67,6 +70,7 @@ if(TensorFlow_FOUND)
   message(STATUS "  Libraries: ${TensorFlow_LIBRARIES}")
 endif()
 
+# Hides verbose variables in the CMake configuration GUI.
 mark_as_advanced(TensorFlow_FOUND TensorFlow_VERSION TensorFlow_DIR TensorFlow_INCLUDE_DIRS TensorFlow_LIBRARIES)
 
 # EOF
