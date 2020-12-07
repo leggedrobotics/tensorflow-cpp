@@ -18,9 +18,9 @@ function download_from_url() {
   if [[ `wget -S --spider $1  2>&1 | grep 'HTTP/1.1 200 OK'` ]];
   then
     EIGEN_ARCHIVE_URL=$1
-    EIGEN_ARCHIVE_NAME="eigen-${EIGEN_COMMIT}"
+    EIGEN_ARCHIVE_TYPE=$2
+    EIGEN_ARCHIVE_NAME=$3
     EIGEN_ARCHIVE="${EIGEN_ARCHIVE_NAME}.${EIGEN_ARCHIVE_TYPE}"
-    echo "DOWNDLOAD: ${EIGEN_ARCHIVE}"
     echo "Install: Downloading Eigen from '${EIGEN_ARCHIVE_URL}'";
     echo "Install: Target directory is '${EIGEN_DIR}'";
     echo "Install: Target name is '${EIGEN_ARCHIVE}'";
@@ -37,6 +37,34 @@ function download_from_url() {
 # Set the source directory of this file
 EIGEN_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
+# Default configurations
+TENSORFLOW_VERSION="2.3"
+RUN_CMAKE=false
+INSTALL_PREFIX="${HOME}/.local"
+
+# Iterate over arguments list to configure the installation.
+for i in "$@"
+do
+case $i in
+  --tf-version=*)
+    TENSORFLOW_VERSION="${i#*=}"
+    shift # past argument with no value
+    ;;
+  --run-cmake)
+    RUN_CMAKE=true
+    shift # past argument with no value
+    ;;
+  --install-prefix=*)
+    INSTALL_PREFIX=$(eval realpath -m "${i#*=}")
+    shift # past argument with no value
+    ;;
+  *)
+    echo "[install docker]: Error: Unknown arguments: ${i#*=}"
+    exit 1
+    ;;
+esac
+done
+
 # First check if an existing directory exists
 if [[ -d "${EIGEN_DIR}/eigen3" ]];
 then
@@ -44,28 +72,40 @@ then
   exit;
 fi
 
-# Set the default version of TensorFlow
-if [[ -z ${TENSORFLOW_VERSION} ]]; then TENSORFLOW_VERSION="1.15"; fi
-
-# Set default commit version
-if [[ -z ${EIGEN_COMMIT} ]]; then EIGEN_COMMIT="49177915a14a"; fi
-
 # Define mappings from TensorFlow versions to Eigen commits
-if [[ "${TENSORFLOW_VERSION}" == "1.13" && -z ${EIGEN_COMMIT} ]]; then EIGEN_COMMIT="9f48e814419e"; fi
-if [[ "${TENSORFLOW_VERSION}" == "1.15" && -z ${EIGEN_COMMIT} ]]; then EIGEN_COMMIT="49177915a14a"; fi
+if [[ "${TENSORFLOW_VERSION}" == "1.13" && -z ${EIGEN_ARCHIVE_URL} ]];
+then
+  EIGEN_COMMIT="9f48e814419e";
+  EIGEN_ARCHIVE_TYPE="tar.gz"
+  EIGEN_ARCHIVE_NAME="${EIGEN_COMMIT}"
+  EIGEN_ARCHIVE_URL="https://storage.googleapis.com/mirror.tensorflow.org/bitbucket.org/eigen/eigen/get/${EIGEN_COMMIT}.${EIGEN_ARCHIVE_TYPE}"
+elif [[ "${TENSORFLOW_VERSION}" == "1.15" && -z ${EIGEN_ARCHIVE_URL} ]];
+then
+  EIGEN_COMMIT="49177915a14a";
+  EIGEN_ARCHIVE_TYPE="tar.gz"
+  EIGEN_ARCHIVE_NAME="eigen-eigen-${EIGEN_COMMIT}"
+  EIGEN_ARCHIVE_URL="https://storage.googleapis.com/mirror.tensorflow.org/bitbucket.org/eigen/eigen/get/${EIGEN_COMMIT}.${EIGEN_ARCHIVE_TYPE}"
+elif [[ "${TENSORFLOW_VERSION}" == "2.3" && -z ${EIGEN_ARCHIVE_URL} ]];
+then
+  EIGEN_COMMIT="386d809bde475c65b7940f290efe80e6a05878c4";
+  EIGEN_ARCHIVE_TYPE="tar.gz"
+  EIGEN_ARCHIVE_NAME="eigen-${EIGEN_COMMIT}"
+  EIGEN_ARCHIVE_URL="https://storage.googleapis.com/mirror.tensorflow.org/gitlab.com/libeigen/eigen/-/archive/${EIGEN_COMMIT}/eigen-${EIGEN_COMMIT}.${EIGEN_ARCHIVE_TYPE}"
+else
+  echo "Install: Version '${TENSORFLOW_VERSION}' not recognized. Please use one of the following: {1.13, 1.15, 2.3}";
+  exit;
+fi
 
 # Step 1.: Download the archive
-EIGEN_ARCHIVE_TYPE="tar.gz"
-EIGEN_ARCHIVE_URL="https://storage.googleapis.com/mirror.tensorflow.org/bitbucket.org/eigen/eigen/get/${EIGEN_COMMIT}.${EIGEN_ARCHIVE_TYPE}"
-download_from_url ${EIGEN_ARCHIVE_URL}
+download_from_url ${EIGEN_ARCHIVE_URL} ${EIGEN_ARCHIVE_TYPE} ${EIGEN_ARCHIVE_NAME}
 
-# Step 3.: Unpackage archive into ./eigen3
+# Step 2.: Unpack archive into ${EIGEN_DIR}/eigen3
 echo "Install: Unpacking Eigen into destination '${EIGEN_DIR}/eigen3'"
 tar -xvzf ${EIGEN_ARCHIVE}
-mv eigen-${EIGEN_ARCHIVE_NAME} ${EIGEN_DIR}/eigen3
-rm -rf eigen-${EIGEN_ARCHIVE_NAME} ${EIGEN_ARCHIVE}
+mv ${EIGEN_ARCHIVE_NAME} ${EIGEN_DIR}/eigen3
+rm -rf ${EIGEN_ARCHIVE_NAME} ${EIGEN_ARCHIVE}
 
-# Step 4.: Add the necessary package configuration file for Catkin
+# Step 3.: Add the necessary package configuration file for Catkin
 echo "Install: Adding Catkin package file to '${EIGEN_DIR}/eigen3'"
 cp ${EIGEN_DIR}/package.xml.in ${EIGEN_DIR}/eigen3/package.xml
 
@@ -76,27 +116,18 @@ wget "https://raw.githubusercontent.com/tensorflow/tensorflow/r${TENSORFLOW_VERS
 patch -p1 < gpu_packet_math.patch
 cd ${EIGEN_DIR}
 
-# Steps 5+6 are optional
-if [[ $1 == "--run-cmake" ]];
+# (Optionally) Steps 5+6 are optional
+if [[ ${RUN_CMAKE} == true ]]
 then
-
-  # Set install location
-  if [[ -z "$2" ]]
-  then
-    EIGEN_INSTALL_PREFIX="${HOME}/.local"
-  else
-    EIGEN_INSTALL_PREFIX="$2"
-  fi
-
   # Step 5.: Removing existing Eigen installation
-  echo "Install: Removing previous installation of Eigen3 at '${EIGEN_INSTALL_PREFIX}'."
-  rm -rf ${EIGEN_INSTALL_PREFIX}/include/eigen3 ${EIGEN_INSTALL_PREFIX}/share/eigen3 ${EIGEN_INSTALL_PREFIX}/share/pkgconfig/eigen3.pc
+  echo "Install: Removing previous installation of Eigen3 at '${INSTALL_PREFIX}'."
+  rm -rf ${INSTALL_PREFIX}/include/eigen3 ${INSTALL_PREFIX}/share/eigen3 ${INSTALL_PREFIX}/share/pkgconfig/eigen3.pc
 
   # Step 6.: Build and install Eigen
-  echo "Install: Building and installing Eigen3 at '${EIGEN_INSTALL_PREFIX}'."
+  echo "Install: Building and installing Eigen3 at '${INSTALL_PREFIX}'."
   mkdir -p ${EIGEN_DIR}/eigen3/build
   cd ${EIGEN_DIR}/eigen3/build
-  cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${EIGEN_INSTALL_PREFIX}
+  cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX}
   make install -j
 fi
 
