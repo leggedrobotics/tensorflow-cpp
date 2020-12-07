@@ -11,7 +11,7 @@
 # Authors: Vassilios Tsounis, tsounsiv@ethz.ch
 #=============================================================================
 cmake_minimum_required(VERSION 3.10)
-project(TensorFlow VERSION 0.2.0 LANGUAGES CXX)
+project(TensorFlow VERSION 0.3.0 LANGUAGES CXX)
 
 # Include CMake helper packages and utilities
 include(GNUInstallDirs)
@@ -21,6 +21,7 @@ include(CMakePackageConfigHelpers)
 # Options
 #==
 
+option(TF_VERSION "Sets the specific version of TensorFlow to load.")
 option(TF_USE_GPU "Configures TensorFlow for Nvidia CUDA GPUs." OFF)
 option(TF_USE_IN_SOURCE "Configures TensorFlow for in-source builds." OFF)
 
@@ -40,7 +41,11 @@ if(NOT DEFINED TENSORFLOW_ROOT)
   # NOTE: Users wanting to use other provided versions should specify
   # this at build time using command line: -DTENSORFLOW_VERSION=<VERSION>
   if(NOT DEFINED TENSORFLOW_VERSION)
-    set(TENSORFLOW_VERSION "1.15.2")
+    if (TF_VERSION)
+      set(TENSORFLOW_VERSION "${TF_VERSION}")
+    else()
+      set(TENSORFLOW_VERSION "2.3.1")
+    endif()
   endif()
   # Sets to use CPU-only (default) or GPU-enabled (optional) builds
   if(TF_USE_GPU)
@@ -57,6 +62,8 @@ if(NOT DEFINED TENSORFLOW_ROOT)
       set(TENSORFLOW_ARCHIVE_URL "${TENSORFLOW_ARCHIVE_SRC_URL}/v0.2.0/${TENSORFLOW_DIST}.zip")
     elseif(${TENSORFLOW_VERSION} STREQUAL "1.13.2")
       set(TENSORFLOW_ARCHIVE_URL "${TENSORFLOW_ARCHIVE_SRC_URL}/v0.1.1/${TENSORFLOW_DIST}.zip")
+    elseif(${TENSORFLOW_VERSION} STREQUAL "2.3.1")
+      set(TENSORFLOW_ARCHIVE_URL "${TENSORFLOW_ARCHIVE_SRC_URL}/v0.3.0/${TENSORFLOW_DIST}.zip")
     else()
       message(FATAL_ERROR "tensorflow-cpp: Version '${TENSORFLOW_VERSION}' is not supported.")
     endif()
