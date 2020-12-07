@@ -11,7 +11,7 @@
 # Authors: Vassilios Tsounis, tsounisv@ethz.ch
 #=============================================================================
 cmake_minimum_required(VERSION 3.10)
-project(tensorflow_examples VERSION 0.2.0 LANGUAGES CXX)
+project(tensorflow_examples VERSION 0.3.0 LANGUAGES CXX)
 
 # Include GNU standard install directories module
 include(GNUInstallDirs)

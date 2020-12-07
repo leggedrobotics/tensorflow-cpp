@@ -41,6 +41,7 @@ struct Options {
   int num_concurrent_sessions = 1;   // The number of concurrent sessions
   int num_concurrent_steps = 10;     // The number of concurrent steps
   int num_iterations = 100;          // Each step repeats this many times
+  bool use_gpu = true;              // Whether to use gpu in the training
 };
 
 // A = [3 2; -1 0]; x = rand(2, 1);
@@ -51,25 +52,34 @@ GraphDef CreateGraphDef() {
   // computation.  Maybe turn this into an mnist model instead?
   Scope root = Scope::NewRootScope();
   using namespace ::tensorflow::ops;  // NOLINT(build/namespaces)
+
   // A = [3 2; -1 0].  Using Const<float> means the result will be a
   // float tensor even though the initializer has integers.
   auto a = Const<float>(root, {{3, 2}, {-1, 0}});
+
   // x = [1.0; 1.0]
   auto x = Const(root.WithOpName("x"), {{1.f}, {1.f}});
+
   // y = A * x
   auto y = MatMul(root.WithOpName("y"), a, x);
+
   // y2 = y.^2
   auto y2 = Square(root, y);
+
   // y2_sum = sum(y2).  Note that you can pass constants directly as
   // inputs.  Sum() will automatically create a Const node to hold the
   // 0 value.
   auto y2_sum = Sum(root, y2, 0);
+
   // y_norm = sqrt(y2_sum)
   auto y_norm = Sqrt(root, y2_sum);
+
   // y_normalized = y ./ y_norm
   Div(root.WithOpName("y_normalized"), y, y_norm);
+
   GraphDef def;
   TF_CHECK_OK(root.ToGraphDef(&def));
+
   return def;
 }
 
@@ -91,6 +101,10 @@ void ConcurrentSteps(const Options* opts, int session_index) {
   SessionOptions options;
   std::unique_ptr<Session> session(NewSession(options));
   GraphDef def = CreateGraphDef();
+  if (options.target.empty()) {
+    graph::SetDefaultDevice(opts->use_gpu ? "/device:GPU:0" : "/cpu:0", &def);
+  }
+
   TF_CHECK_OK(session->Create(def));
 
   // Spawn M threads for M concurrent steps.
@@ -107,6 +121,7 @@ void ConcurrentSteps(const Options* opts, int session_index) {
       Eigen::Tensor<float, 0, Eigen::RowMajor> inv_norm =
           x_flat.square().sum().sqrt().inverse();
       x_flat = x_flat * inv_norm();
+
       // Iterations.
       std::vector<Tensor> outputs;
       for (int iter = 0; iter < opts->num_iterations; ++iter) {
@@ -125,6 +140,7 @@ void ConcurrentSteps(const Options* opts, int session_index) {
       }
     });
   }
+
   // Delete the threadpool, thus waiting for all threads to complete.
   step_threads.reset(nullptr);
   TF_CHECK_OK(session->Close());
@@ -133,9 +149,11 @@ void ConcurrentSteps(const Options* opts, int session_index) {
 void ConcurrentSessions(const Options& opts) {
   // Spawn N threads for N concurrent sessions.
   const int N = opts.num_concurrent_sessions;
+
   // At the moment our Session implementation only allows
   // one concurrently computing Session on GPU.
   CHECK_EQ(1, N) << "Currently can only have one concurrent session.";
+
   thread::ThreadPool session_threads(Env::Default(), "trainer", N);
   for (int i = 0; i < N; ++i) {
     session_threads.Schedule(std::bind(&ConcurrentSteps, &opts, i));
@@ -147,20 +165,24 @@ void ConcurrentSessions(const Options& opts) {
 
 namespace {
 
-bool ParseInt32Flag(tensorflow::StringPiece arg, tensorflow::StringPiece flag, int32* dst) {
+bool ParseInt32Flag(tensorflow::StringPiece arg, tensorflow::StringPiece flag,
+                    int32* dst) {
   if (absl::ConsumePrefix(&arg, flag) && absl::ConsumePrefix(&arg, "=")) {
     char extra;
     return (sscanf(arg.data(), "%d%c", dst, &extra) == 1);
   }
+
   return false;
 }
 
-bool ParseBoolFlag(tensorflow::StringPiece arg, tensorflow::StringPiece flag, bool* dst) {
+bool ParseBoolFlag(tensorflow::StringPiece arg, tensorflow::StringPiece flag,
+                   bool* dst) {
   if (absl::ConsumePrefix(&arg, flag)) {
     if (arg.empty()) {
       *dst = true;
       return true;
     }
+
     if (arg == "=true") {
       *dst = true;
       return true;
@@ -169,6 +191,7 @@ bool ParseBoolFlag(tensorflow::StringPiece arg, tensorflow::StringPiece flag, bo
       return true;
     }
   }
+
   return false;
 }
 
@@ -177,32 +200,35 @@ bool ParseBoolFlag(tensorflow::StringPiece arg, tensorflow::StringPiece flag, bo
 int main(int argc, char* argv[]) {
   tensorflow::example::Options opts;
   std::vector<char*> unknown_flags;
-  // Parse command-line arguments
   for (int i = 1; i < argc; ++i) {
-    // Initially assume the argument is unknown
     if (string(argv[i]) == "--") {
-      while (i < argc) { unknown_flags.push_back(argv[++i]); }
+      while (i < argc) {
+        unknown_flags.push_back(argv[i]);
+        ++i;
+      }
       break;
     }
-    // Check for one of the supported arguments
-    if (
-      ParseInt32Flag(argv[i], "--num_concurrent_sessions", &opts.num_concurrent_sessions) ||
-      ParseInt32Flag(argv[i], "--num_concurrent_steps", &opts.num_concurrent_steps) ||
-      ParseInt32Flag(argv[i], "--num_iterations", &opts.num_iterations)
-    ) { continue; }
-    // If argument remains uknown, print appropriate error message
+
+    if (ParseInt32Flag(argv[i], "--num_concurrent_sessions",
+                       &opts.num_concurrent_sessions) ||
+        ParseInt32Flag(argv[i], "--num_concurrent_steps",
+                       &opts.num_concurrent_steps) ||
+        ParseInt32Flag(argv[i], "--num_iterations", &opts.num_iterations) ||
+        ParseBoolFlag(argv[i], "--use_gpu", &opts.use_gpu)) {
+      continue;
+    }
+
     fprintf(stderr, "Unknown flag: %s\n", argv[i]);
     return -1;
   }
-  // Pass-through any unknown flags.
+
+  // Passthrough any unknown flags.
   int dst = 1;  // Skip argv[0]
-  for (char* f : unknown_flags) { argv[dst++] = f; }
+  for (char* f : unknown_flags) {
+    argv[dst++] = f;
+  }
   argv[dst++] = nullptr;
   argc = static_cast<int>(unknown_flags.size() + 1);
-  // Perform any necessary platform-specific initializations within TensorFlow
   tensorflow::port::InitMain(argv[0], &argc, &argv);
-  // Create the set of concurrent sessions
   tensorflow::example::ConcurrentSessions(opts);
 }
-
-/* EOF */
