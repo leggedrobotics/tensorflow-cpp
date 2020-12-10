@@ -2,7 +2,7 @@
 <package format="2">
   <!--Package Header-->
   <name>tensorflow</name>
-  <version>0.2.0</version>
+  <version>0.3.0</version>
   <description>The TensorFlow CMake package for C/C++ development.</description>
   <license>Apache 2.0</license>
   <url type="website">https://github.com/leggedrobotics/tensorflow-cpp</url>
