@@ -1,7 +1,7 @@
 # Configure paths to python interpreter
-build --action_env PYTHON_BIN_PATH="/home/vassilios/.virtualenvs/tensorflow/bin/python3"
-build --action_env PYTHON_LIB_PATH="/home/vassilios/.virtualenvs/tensorflow/lib/python3.6/site-packages"
-build --python_path="/home/vassilios/.virtualenvs/tensorflow/bin/python3"
+build --python_path="/usr/bin/python3"
+build --action_env PYTHON_BIN_PATH="/usr/bin/python3"
+build --action_env PYTHON_LIB_PATH="/usr/lib/python3/dist-packages"
 
 # Define environment variables
 build --action_env TF_CONFIGURE_IOS="0"

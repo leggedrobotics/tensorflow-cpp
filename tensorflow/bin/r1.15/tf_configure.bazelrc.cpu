@@ -3,9 +3,9 @@ build --host_force_python=PY2
 build --python_path="/usr/bin/python"
 
 # Define environment variables
+build --action_env TF_CONFIGURE_IOS="0"
 build --action_env PYTHON_BIN_PATH="/usr/bin/python"
 build --action_env PYTHON_LIB_PATH="/usr/local/lib/python2.7/dist-packages"
-build --action_env TF_CONFIGURE_IOS="0"
 
 # Add XLA options
 # NOTE: This is already in the .bazelrc file but we redefine it here for safe measure
