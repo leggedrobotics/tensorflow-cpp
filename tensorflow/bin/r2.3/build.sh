@@ -16,26 +16,19 @@
 # Set default versions
 BZL_VERSION="3.1.0"
 TF_VERSION="2.3";
+TF_REVISION="1";
+TF_VERSION_FULL="${TF_VERSION}.${TF_REVISION}";
 TF_VARIANT="cpu";
 TF_SRC="${HOME}/.tensorflow/src";
-TF_LIB="${HOME}/.tensorflow/lib/${TF_VERSION}-${TF_VARIANT}";
+TF_LIB="${HOME}/.tensorflow/lib/${TF_VERSION_FULL}-${TF_VARIANT}";
 
 # Iterate over arguments list to configure the installation.
 for i in "$@"
 do
 case $i in
-  --bazel-version=*)
-    BZL_VERSION="${i#*=}"
-    shift # past argument with no value
-    ;;
-  --tf-version=*)
-    TF_VERSION="${i#*=}"
-    TF_LIB="${HOME}/.tensorflow/lib/${TF_VERSION}-${TF_VARIANT}";
-    shift # past argument with no value
-    ;;
   --gpu)
     TF_VARIANT="gpu"
-    TF_LIB="${HOME}/.tensorflow/lib/${TF_VERSION}-${TF_VARIANT}";
+    TF_LIB="${HOME}/.tensorflow/lib/${TF_VERSION_FULL}-${TF_VARIANT}";
     shift # past argument with no value
     ;;
   *)
@@ -46,7 +39,7 @@ esac
 done
 
 # TODO: check version of TF to determine version of Bazel to install
-echo "TensorFlow: Building ${TF_VERSION}-${TF_VARIANT} using Bazel ${BZL_VERSION}";
+echo "TensorFlow: Building ${TF_VERSION_FULL}-${TF_VARIANT} using Bazel ${BZL_VERSION}";
 echo "TensorFlow: Build: Using source path: ${TF_SRC}";
 echo "TensorFlow: Build: Using output path: ${TF_LIB}";
 
