@@ -57,12 +57,12 @@ For such cases, we provide an `bash` script in `tensorflow-cpp/eigen/install.sh`
 To download, unpack and patch Eigen:
 ```commandline
 cd tensorflow-cpp/eigen
-install.sh
+./install.sh
 ```
 To additionally build and install Eigen, the `--run-cmake` argument can be used:
 ```commandline
 cd tensorflow-cpp/eigen
-install.sh --run-cmake
+./install.sh --run-cmake
 ```
 
 **NOTE:** We recommend installing to `~/.local` in order to prevent conflicts with other version of Eigen which may be installed via `apt`. Eigen exports its package during the build step, so CMake will default to finding the one we just installed unless a `HINT` is used or `CMAKE_PREFIX_PATH` is set to another location.  
@@ -73,7 +73,7 @@ These are the options for using the TensorFlow CMake package:
 
 **Option 1 (Recommended):** Installing into the (local) file system
 ```bash
-cd tensorflow/tensorflow
+cd tensorflow-cpp/tensorflow
 mkdir build && cd build
 cmake -DCMAKE_INSTALL_PREFIX=~/.local -DCMAKE_BUILD_TYPE=Release ..
 make install -j
